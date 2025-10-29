@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anleitung: Visual Studio Code & GitHub Desktop auf macOS</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            font-size: 1.8em;
+        }
+        h3 {
+            color: #4a6572;
+            margin-top: 25px;
+            font-size: 1.4em;
+        }
+        p {
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+        ul li {
+            margin-bottom: 8px;
+        }
+        code {
+            background-color: #eef1f3;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            color: #c7254e;
+            font-size: 0.95em;
+        }
+        strong {
+            color: #2c3e50;
+        }
+        .note {
+            background-color: #e8f0fe;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            color: #2c3e50;
+        }
+        .note p {
+            margin: 0;
+            font-size: 1em;
+        }
+        hr {
+            border: 0;
+            border-top: 1px solid #ecf0f1;
+            margin: 40px 0;
+        }
+        .image-placeholder {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .image-placeholder img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Anleitung: Visual Studio Code & GitHub Desktop auf macOS installieren und verbinden</h1>
+        <p>Diese Anleitung hilft dir, zwei wichtige Tools für die Softwareentwicklung zu installieren und einzurichten: Visual Studio Code (ein Code-Editor) und GitHub Desktop (ein einfaches Tool zur Versionskontrolle).</p>
+
+        <hr>
+
+        <h2>Teil 1: Visual Studio Code installieren</h2>
+        <h3>1. Visual Studio Code herunterladen:</h3>
+        <ul>
+            <li>Öffne deinen Webbrowser (z.B. Safari oder Chrome).</li>
+            <li>Gehe zu dieser Adresse: <code>https://code.visualstudio.com/</code></li>
+            <li>Du siehst einen großen "Download for macOS" Button. Klicke darauf.</li>
+        </ul>
+
+        <h3>2. Visual Studio Code installieren:</h3>
+        <ul>
+            <li>Nach dem Download findest du eine Datei namens <code>VSCode-darwin-universal.zip</code> (oder ähnlich) in deinem "Downloads"-Ordner.</li>
+            <li>Doppelklicke auf die <code>.zip</code>-Datei, um sie zu entpacken. Du erhältst eine Anwendung namens "Visual Studio Code".</li>
+            <li>Ziehe die "Visual Studio Code"-Anwendung in deinen "Programme" (Applications)-Ordner.</li>
+            <li>Du kannst Visual Studio Code jetzt starten, indem du es aus dem "Programme"-Ordner oder über Spotlight (<code>Cmd + Leertaste</code>, dann "Visual Studio Code" eingeben) öffnest. Beim ersten Start wirst du möglicherweise gefragt, ob du der App vertraust – klicke auf "Öffnen".</li>
+        </ul>
+        <div class="image-placeholder">
+            <!-- Hier würde das erste Bild eingefügt werden -->
+            <!-- <img src="URL_ZU_BILD_1.jpg" alt="Download Visual Studio Code"> -->
+        </div>
+
+        <hr>
+
+        <h2>Teil 2: GitHub Desktop installieren</h2>
+        <h3>1. GitHub Desktop herunterladen:</h3>
+        <ul>
+            <li>Öffne deinen Webbrowser.</li>
+            <li>Gehe zu dieser Adresse: <code>https://desktop.github.com/</code></li>
+            <li>Klicke auf den "Download for macOS" Button.</li>
+        </ul>
+
+        <h3>2. GitHub Desktop installieren:</h3>
+        <ul>
+            <li>Nach dem Download findest du eine Datei namens <code>GitHubDesktop-arm64.zip</code> (oder ähnlich) in deinem "Downloads"-Ordner.</li>
+            <li>Doppelklicke auf die <code>.zip</code>-Datei, um sie zu entpacken. Du erhältst eine Anwendung namens "GitHub Desktop".</li>
+            <li>Ziehe die "GitHub Desktop"-Anwendung in deinen "Programme" (Applications)-Ordner.</li>
+            <li>Starte GitHub Desktop. Beim ersten Start wirst du aufgefordert, dich mit deinem GitHub-Konto anzumelden. Wenn du noch keins hast, kannst du es hier erstellen.</li>
+        </ul>
+        <div class="image-placeholder">
+            <!-- Hier würde das zweite Bild eingefügt werden -->
+            <!-- <img src="URL_ZU_BILD_2.jpg" alt="Download GitHub Desktop"> -->
+        </div>
+
+        <hr>
+
+        <h2>Teil 3: Visual Studio Code und GitHub Desktop verbinden</h2>
+        <p>Die gute Nachricht ist, dass diese beiden Tools sehr gut zusammenarbeiten und die Verbindung oft automatisch hergestellt wird oder sehr einfach ist.</p>
+
+        <h3>1. Standard-Editor in GitHub Desktop einstellen:</h3>
+        <ul>
+            <li>Öffne GitHub Desktop.</li>
+            <li>Gehe in der Menüleiste deines Macs zu <code>GitHub Desktop</code> > <code>Einstellungen...</code> (oder <code>Preferences...</code>).</li>
+            <li>Im Reiter "Integrations" (Integrationen) oder "Advanced" (Erweitert) suchst du nach der Option "External Editor" (Externer Editor).</li>
+            <li>Wähle dort "Visual Studio Code" aus der Liste aus.</li>
+            <li>Klicke auf "Save" (Speichern).</li>
+        </ul>
+        <div class="image-placeholder">
+            <!-- Hier würde das dritte Bild eingefügt werden -->
+            <!-- <img src="URL_ZU_BILD_3.jpg" alt="GitHub Desktop Einstellungen"> -->
+        </div>
+
+        <hr>
+
+        <h2>Wie die Tools zusammenarbeiten:</h2>
+        <ul>
+            <li><strong>Von GitHub Desktop zu Visual Studio Code:</strong> Wenn du in GitHub Desktop ein Repository (ein Projekt) geöffnet hast und eine Datei bearbeiten oder einen Ordner im Editor öffnen möchtest, kannst du oft einfach auf einen Button wie "Open in Visual Studio Code" klicken, und VS Code wird mit dem entsprechenden Projekt geöffnet.</li>
+            <li><strong>Visual Studio Code als Git-Tool:</strong> Visual Studio Code hat auch eine integrierte Unterstützung für Git (die Technologie hinter GitHub). Du kannst Commits machen, Branches wechseln und vieles mehr direkt in VS Code über das Quellcodeverwaltungs-Icon (sieht aus wie drei verbundene Punkte) in der linken Seitenleiste. Wenn du jedoch lieber eine grafische Oberfläche für diese Aufgaben hast, ist GitHub Desktop eine hervorragende Wahl.</li>
+        </ul>
+
+        <div class="note">
+            <p>Das war's schon! Du bist jetzt bereit, mit deinen Projekten zu starten. Viel Erfolg!</p>
+        </div>
+    </div>
+</body>
+</html>
