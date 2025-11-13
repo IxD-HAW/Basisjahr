@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kakerlake läuft herum</title>
+  <style>
+    :root{--bg:#0b1220;--ground:#1b2430}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg),#071018);color:#e6eef8}
+    .stage{position:relative;overflow:hidden;height:100vh;width:100vw;background:radial-gradient(circle at 20% 10%, rgba(255,255,255,0.02), transparent 8%), linear-gradient(0deg, rgba(0,0,0,0.2), transparent);}
+    .hud{position:fixed;left:12px;top:12px;background:rgba(0,0,0,0.35);backdrop-filter:blur(4px);padding:8px 10px;border-radius:10px;font-size:14px}
+    button{background:#2b6cff;border:none;color:white;padding:6px 10px;border-radius:8px;cursor:pointer}
+    button.secondary{background:#3a4757}
+
+    /* Kakerlake */
+    .roach{
+      position:absolute;left:50%;top:50%;width:80px;height:48px;transform-origin:center center;pointer-events:auto;user-select:none;z-index:5;filter:drop-shadow(0 6px 8px rgba(0,0,0,0.6));
+    }
+    /* kleiner auf Mobil */
+    @media (max-width:600px){.roach{width:64px;height:36px}}
+
+    /* optional Boden-Schatten */
+    .shadow{position:absolute;left:50%;top:50%;width:46%;height:10%;transform:translate(-50%,-10%);border-radius:50%;background:radial-gradient(closest-side, rgba(0,0,0,0.45), rgba(0,0,0,0.05));filter:blur(6px);z-index:3;opacity:0.6}
+
+    /* kleine Instruktion */
+    .hint{position:fixed;right:12px;top:12px;background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:10px;font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <!-- HUD -->
+    <div class="hud">
+      <button id="toggleBtn">Pause</button>
+      <button id="resetBtn" class="secondary">Zurücksetzen</button>
+    </div>
+    <div class="hint">Klicke auf die Kakerlake, damit sie schneller davonrennt.</div>
+
+    <!-- Roach SVG (inline, keine externen assets) -->
+    <div id="roach" class="roach" style="transform: translate(-50%, -50%) rotate(0deg); touch-action: none;">
+      <svg viewBox="0 0 200 120" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <filter id="f1" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="0.6" result="b"/>
+            <feMerge><feMergeNode in="b"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Körper -->
+        <g transform="translate(0,0)">
+          <ellipse cx="100" cy="60" rx="60" ry="32" fill="#3b2718" />
+          <ellipse cx="86" cy="56" rx="28" ry="20" fill="#1b0f08" opacity="0.12" />
+          <!-- Kopf -->
+          <ellipse cx="140" cy="60" rx="22" ry="18" fill="#2f1c10" />
+          <!-- Antennen -->
+          <path d="M150 46 C170 34, 185 20, 195 12" stroke="#1b0f08" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <path d="M150 74 C170 86, 185 100, 195 108" stroke="#1b0f08" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <!-- Beine (stylisiert) -->
+          <g stroke="#1a120d" stroke-width="3" stroke-linecap="round" fill="none">
+            <path d="M72 34 C56 22, 36 24, 16 18"/>
+            <path d="M72 44 C48 40, 34 44, 20 54"/>
+            <path d="M72 68 C56 74, 36 76, 16 88"/>
+            <path d="M128 34 C144 22, 164 24, 184 18"/>
+            <path d="M128 44 C152 40, 166 44, 180 54"/>
+            <path d="M128 68 C144 74, 164 76, 184 88"/>
+          </g>
+          <!-- Muster -->
+          <path d="M40 48 C64 28, 96 24, 130 34" stroke="#6b3e28" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </g>
+      </svg>
+    </div>
+    <div id="shadow" class="shadow"></div>
+  </div>
+
+  <script>
+    (function(){
+      const stage = document.getElementById('stage');
+      const roachEl = document.getElementById('roach');
+      const shadow = document.getElementById('shadow');
+      const toggleBtn = document.getElementById('toggleBtn');
+      const resetBtn = document.getElementById('resetBtn');
+
+      let running = true;
+      let width, height;
+      const state = {
+        x: 0, y: 0,
+        vx: 0, vy: 0,
+        speed: 90, // pixels per second (base)
+        heading: 0, // radians
+      };
+
+      function resize(){
+        const rect = stage.getBoundingClientRect();
+        width = rect.width; height = rect.height;
+      }
+
+      function placeRandom(){
+        state.x = Math.random()*width;
+        state.y = Math.random()*height;
+        state.heading = Math.random()*Math.PI*2;
+        const s = 60 + Math.random()*80;
+        state.speed = s;
+        state.vx = Math.cos(state.heading)*state.speed;
+        state.vy = Math.sin(state.heading)*state.speed;
+        updateDom();
+      }
+
+      // small random steering
+      let lastSteer = 0;
+      function step(dt){
+        // occasionally change heading
+        lastSteer += dt;
+        if(lastSteer > 0.25){
+          lastSteer = 0;
+          // small random turn
+          const turn = (Math.random()-0.5) * 1.4; // radians per steer
+          state.heading += turn * dt * 6;
+          // 2% chance of big panic turn
+          if(Math.random() < 0.02) state.heading += (Math.random()>0.5?1:-1) * (0.8 + Math.random()*1.2);
+          // recompute velocity
+          const targetSpeed = state.speed;
+          state.vx = Math.cos(state.heading)*targetSpeed;
+          state.vy = Math.sin(state.heading)*targetSpeed;
+        }
+
+        // move
+        state.x += state.vx * dt;
+        state.y += state.vy * dt;
+
+        // bounce softly off walls by reflecting heading with some randomness
+        const margin = 16;
+        let bounced = false;
+        if(state.x < margin){ state.x = margin; state.heading = Math.PI - state.heading; bounced = true; }
+        if(state.x > width - margin){ state.x = width - margin; state.heading = Math.PI - state.heading; bounced = true; }
+        if(state.y < margin){ state.y = margin; state.heading = -state.heading; bounced = true; }
+        if(state.y > height - margin){ state.y = height - margin; state.heading = -state.heading; bounced = true; }
+        if(bounced){
+          // add a jitter
+          state.heading += (Math.random()-0.5)*0.8;
+          state.vx = Math.cos(state.heading)*state.speed;
+          state.vy = Math.sin(state.heading)*state.speed;
+        }
+
+        updateDom();
+      }
+
+      function updateDom(){
+        // translate and rotate so the head points towards movement
+        const deg = state.heading * 180/Math.PI;
+        roachEl.style.transform = `translate(${state.x}px, ${state.y}px) translate(-50%,-50%) rotate(${deg}deg)`;
+        // shadow follows but slightly below and scaled based on vertical position
+        const sx = state.x; const sy = Math.min(height-10, state.y + 28);
+        shadow.style.left = sx + 'px';
+        shadow.style.top = sy + 'px';
+        const scale = 0.5 + 0.5*(state.y/height);
+        shadow.style.width = Math.max(40, 160*scale) + 'px';
+        shadow.style.opacity = 0.35 + 0.45*(state.y/height);
+      }
+
+      // animation loop
+      let last = performance.now();
+      function tick(t){
+        const now = t;
+        let dt = (now - last)/1000; if(dt>0.05) dt = 0.05; // clamp
+        last = now;
+        if(running) step(dt);
+        requestAnimationFrame(tick);
+      }
+
+      // handle clicks -> panic!
+      roachEl.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        // boost speed and change heading away from click point
+        const rect = roachEl.getBoundingClientRect();
+        const cx = rect.left + rect.width/2;
+        const cy = rect.top + rect.height/2;
+        const dx = cx - e.clientX; const dy = cy - e.clientY;
+        state.heading = Math.atan2(dy, dx);
+        state.speed = Math.min(600, state.speed + 320);
+        state.vx = Math.cos(state.heading)*state.speed;
+        state.vy = Math.sin(state.heading)*state.speed;
+        // gradually reduce speed back to normal
+        setTimeout(()=>{ state.speed = 120 + Math.random()*60; }, 500);
+      });
+
+      // stage click makes it wander towards clicked spot (mild curiosity)
+      stage.addEventListener('click', (e)=>{
+        const rect = stage.getBoundingClientRect();
+        const tx = e.clientX - rect.left; const ty = e.clientY - rect.top;
+        const ang = Math.atan2(ty - state.y, tx - state.x);
+        state.heading = ang + (Math.random()-0.5)*0.4;
+        state.speed = 80 + Math.random()*80;
+        state.vx = Math.cos(state.heading)*state.speed;
+        state.vy = Math.sin(state.heading)*state.speed;
+      });
+
+      // pause / reset buttons
+      toggleBtn.addEventListener('click', ()=>{
+        running = !running; toggleBtn.textContent = running ? 'Pause' : 'Start';
+      });
+      resetBtn.addEventListener('click', ()=>{ placeRandom(); running = true; toggleBtn.textContent = 'Pause'; });
+
+      // keep stage size updated
+      window.addEventListener('resize', ()=>{ resize(); });
+
+      // initial setup
+      resize();
+      placeRandom();
+      requestAnimationFrame(tick);
+
+      // expose a tiny API for dev tools (optional)
+      window.__roach = {
+        get state(){ return state; },
+        placeRandom
+      };
+    })();
+  </script>
+</body>
+</html>

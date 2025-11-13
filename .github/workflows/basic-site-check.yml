@@ -1,0 +1,26 @@
+name: Basic site checks
+
+on:
+  pull_request:
+    paths:
+      - '**/*.html'
+      - 'style.css'
+      - 'surprise/**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Find top-level HTML files
+        run: |
+          echo "Top-level HTML files:" 
+          ls -1 *.html || true
+      - name: Check for console.log in JS
+        run: |
+          echo "Checking for console.log occurrences..."
+          grep -R --line-number "console.log(" || true
+      - name: Warn about inline big styles
+        run: |
+          echo "Checking for large inline <style> blocks in HTML (heuristic)..."
+          perl -0777 -ne 'print "$ARGV\n" if /<style[\s\S]{200,}>/s' *.html || true
